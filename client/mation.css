@@ -1,0 +1,42 @@
+#webcam,#webcamCanvas,#preview,#videoContainer{
+  width:800px;
+  height:450px;
+  left:0px;
+  top:0px;
+  border: solid 1px black;
+} 
+
+
+#preview{
+  z-index:20;
+}
+
+#webcamCanvas{
+display:none
+}
+
+.onion-skin{
+  display:none;
+  opacity:.2;
+}
+
+#onion1{z-index:30;}
+#onion2{z-index:31;}
+#onion3{z-index:32;}
+
+.container-content{
+  position: absolute;
+  left:0px;
+  top:0px;
+}
+
+#videoContainer{
+  position:relative;
+}
+
+#filmstrip img{
+  width:80px;
+  height:45px;
+  margin:5px;
+  float:left;
+}
