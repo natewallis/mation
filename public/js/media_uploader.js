@@ -66,7 +66,6 @@ var MediaUploader = function(options) {
   this.chunkSize = options.chunkSize || 0;
   this.retryHandler = new RetryHandler();
 
-console.log(this.file);
   this.url = options.url;
   if (!this.url) {
     var params = options.params || {};
@@ -97,7 +96,6 @@ MediaUploader.prototype.upload = function() {
   }.bind(this);
 
   xhr.onerror = this.onUploadError_.bind(this);
-console.log(xhr);
   xhr.send(JSON.stringify(this.metadata));
 };
 

@@ -1,159 +1,117 @@
 <head>
-  <title>mation_com_au</title>
-  <script src="js/media_uploader.js"></script>
-  <script src="js/upload_video.js"></script>
+  <title>mation_com_au</title> 
+  <script src="js/mation.js"></script> 
+  <script src="js/jquery-2.1.4.min.js"></script>
+  <script src="js/jquery-ui.min.js"></script>
+  <script src="js/jquery.youtubepopup.min.js"></script>
+  <script src="js/webcam.js"></script>
+  <script src="https://apis.google.com/js/client.js"></script>
 </head>
 
 <body>
 
-  <div id="videoContainer">
-    <video class="container-content" autoplay id="webcam"></video>
-    <video class="container-content" id="preview"></video>
-    <canvas class="container-content" id="webcamCanvas"></canvas>
-    <div class="container-content onion-skin" id="onion1"></div>
-    <div class="container-content onion-skin" id="onion2"></div>
-    <div class="container-content onion-skin" id="onion3"></div>
-  </div>
-
 <script>
 
-</script>
-
-<script>
-
-  var videoWidth = 800, videoHeight = 450;
-  var realVideoWidth, realVideoHeight;
-  var clientId = '809043913106-hda8s2ho0enhcnoeecus3q8gc6fcnf62.apps.googleusercontent.com';
-  var apiKey = 'AIzaSyBMhflY8nb0z9SAU1Ff7AkDyVyoDVXEMxA';
-  var scopes = 'https://www.googleapis.com/auth/youtube';
-  var canvas, video, ctx, refreshInterval, images, videoFile,uploadVideo,previewURL, w,h;
-  var uploadClick = 0;
-  var onionSkin = 0, onionsAvailable = 3;
-  var frameTotal = 0;
-
-  function refreshOnions(){
-    var onionCount = 1;
-    for (var copyCount=frameTotal-1; copyCount>=Math.max(frameTotal - onionsAvailable, 0); copyCount--){
-      var onionSkin = document.getElementById('onion' + onionCount);
-      onionSkin.innerHTML = "";
-      var img = document.createElement('img');
-      img.src = images[copyCount];
-      onionSkin.appendChild(img);
-      onionCount++;
-    }
-  }
-  
-  function setOnions(amount){
-
-    onionSkin = amount;
-
-    for (var onionCount=1; onionCount<=onionsAvailable; onionCount++){
-      if (onionCount <= amount){
-        document.getElementById('onion' + onionCount).style.display = 'block';
-      }else{
-        document.getElementById('onion' + onionCount).style.display = 'none';
-      }
-    }
-
-  }
-
-  function handleClientLoad() {
-    gapi.client.setApiKey(apiKey);
-    window.setTimeout(checkAuth,1);
-  }
-
-  function checkAuth() {
-    gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
-  }
-
-  function handleAuthResult(authResult) {
-    if(authResult.access_token) {
-      uploadVideo = new UploadVideo();
-      uploadVideo.ready(authResult.access_token);
-    }
-  }
 
   $(function(){
 
-    images = [];
-    canvas = document.getElementById('webcamCanvas');
-    canvas.width = videoWidth;
-    canvas.height = videoHeight;
-    ctx = canvas.getContext("2d");
+/*REFACTOR*/
+var progressTimer
+progressbar = $( "#progressbar" )
+progressLabel = $( ".progress-label" )
+       dialog = $( "#dialog" ).dialog({
+        autoOpen: false,
+        closeOnEscape: false,
+        resizable: false,
+        modal:true,
+        moveable:false,
+        open: function() {
+$('.ui-dialog-titlebar-close').remove();
+        },
+        beforeClose: function() {
+        }
+      })
 
-    video = $("#webcam");
-
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-    navigator.getUserMedia({video: true, audio:false}, 
-      function(localMediaStream) {
-        video = document.getElementById('webcam');
-        video.src = window.URL.createObjectURL(localMediaStream);
-        video.onloadedmetadata = function (e){
-          realVideoWidth = video.videoWidth;
-          realVideoHeight = video.videoHeight;
-          refreshInterval = setInterval(function(){
-            ctx.drawImage(video, (videoWidth - realVideoWidth) / 2, (videoHeight - realVideoHeight) / 2, realVideoWidth, realVideoHeight);
-          }, 100);
-        };
-      },
-      function(e){
-       console.log("error", e);
-      });
-
-    $("#uploadButton").click(function handleAuthClick(event) {
-      uploadClick++;
-      if(uploadClick == 1){
-        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-      }else{
-         uploadVideo.uploadFile(videoFile);
+progressbar.progressbar({
+      value: false,
+      change: function() {
+        progressLabel.text( "Current Progress: " + progressbar.progressbar( "value" ) + "%" );
       }
     });
 
+    mation = new Mation();
 
-    $("#captureButton").click(function(e){
-      var img = document.createElement('img');
-      var encodedImage = canvas.toDataURL("image/webp");
-      img.src = encodedImage;
-      images.push(encodedImage);
-      document.getElementById('filmstrip').appendChild(img);
-      frameTotal++;
-      refreshOnions();
     });
 
-    $("#previewButton").click(function(e){
-        var video = document.getElementById('preview');
-        var preview = Whammy.fromImageArray(images, 24);
-        videoFile = preview;
-        previewURL = window.URL.createObjectURL(preview);
-        video.src = previewURL;
-        video.addEventListener('ended',function(e){
-          video.style.display = "none";
-          });
-          video.style.display = "block";
-          video.play();
-    });
 
-    $("#onionButton1").click(function(e){setOnions(1);});
-    $("#onionButton2").click(function(e){setOnions(2);});
-    $("#onionButton3").click(function(e){setOnions(3);});
-    $("#onionOff").click(function(e){setOnions(0);});
-
-  });
 
 </script>
 
-  <input id="onionButton1" type="button" value="ONION 1"/> 
-  <input id="onionButton2" type="button" value="ONION 2"/> 
-  <input id="onionButton3" type="button" value="ONION 3"/> 
-  <input id="onionOff" type="button" value="ONION OFF"/> 
-  <input id="captureButton" type="button" value="CAPTURE"/> 
-  <input id="previewButton" type="button" value="PREVIEW"/> 
-  <input id="uploadButton" type="button" value="UPLOAD"/> 
-  <div id="filmstrip"></div>
+  <div id="bootScreen">
+    <div id="bootScreenInstructions">
+      <p id="boot-screen-logo">MATION</p>
+      <p class="bootScreenMantra">mation allows you create animations from your web browser using any camera attached to your computer</p>
+      <p class="bootScreenMantra">publish them directly to youtube and share them with your friends</p>
+      <p class="bootScreenMantra">what can you say?</p>
+      <a id="get-started" class="myButton">GET STARTED</a>
+      <div id="init">
+      <p class="bootScreenMantra" style="display:inline-block;">Initialising camera...</p>
+      <img src="images/loading_spinner.gif" style="width:25px;height25px;"/>
+      </div>
+    </div>
+  </div>
 
-<footer>
-  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
-</footer>
+  <div id="header">
+    <div id="sync-status">
+      <img src="images/loading_spinner.gif" style="width:25px;height25px;"/>
+      <span id="sync-percentage">100%</span>
+    </div>
+  </div>
+
+  <div id="recordingContainer">
+    <div id="webcamContainer">
+      <div class="container-content onion-skin" id="onion1"></div>
+      <div class="container-content onion-skin" id="onion2"></div>
+      <div class="container-content onion-skin" id="onion3"></div>
+      <div id="captureContainer">
+        <input id="captureButton" type="button" value="CAPTURE"/> 
+        <input id="previewButton" type="button" value="PREVIEW"/> 
+        <input id="uploadButton" type="button" value="UPLOAD"/> 
+        <br>
+        <input id="onionOff" type="button" value="ONION OFF"/> 
+        <input id="onionButton1" type="button" value="ONION 1"/> 
+        <input id="onionButton2" type="button" value="ONION 2"/> 
+        <input id="onionButton3" type="button" value="ONION 3"/> 
+      </div>
+      <div id="webcamContainer"></div>
+    </div>
+  </div>
+
+  <div id="footer">asdg</div>
+
+  <div id="videoContainer">
+    <canvas class="container-content" id="webcamCanvas"></canvas>
+    <canvas class="container-content" id="previewCanvas"></canvas>
+    <img class="container-content preview" id="preview"/>
+  </div>
+
+  <div id="dialog" title="File Download">
+  <div class="progress-label">Starting download...</div>
+  <div id="progressbar"></div>
+</div>
+
+<!--  {{#each mations}}
+    {{> mation}}
+    {{/each}}-->
 
 </body>
+
+<template name="mation">
+  <img src="{{thumbnailURL}}"/>
+  <a class="popup-youtube" href="https://www.youtube.com/watch?v={{youtubeid}}">{{name}}</a>
+  <script>
+    $(function(){
+      });
+  </script>
+</template>
 

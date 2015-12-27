@@ -1,0 +1,190 @@
+@font-face {
+    font-family: 'futurabold';
+    src: url('../fonts/futura_extra_bold-webfont.eot');
+    src: url('../fonts/futura_extra_bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/futura_extra_bold-webfont.woff2') format('woff2'),
+         url('../fonts/futura_extra_bold-webfont.woff') format('woff'),
+         url('../fonts/futura_extra_bold-webfont.ttf') format('truetype'),
+         url('../fonts/futura_extra_bold-webfont.svg#futurabold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'latomedium';
+    src: url('../fonts/lato-medium-webfont.eot');
+    src: url('../fonts/lato-medium-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/lato-medium-webfont.woff2') format('woff2'),
+         url('../fonts/lato-medium-webfont.woff') format('woff'),
+         url('../fonts/lato-medium-webfont.ttf') format('truetype'),
+         url('../fonts/lato-medium-webfont.svg#latomedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+#webcamCanvas,#preview{
+  left:0px;
+  top:0px;
+} 
+
+#webcam, .onion-skin{
+  width:100%;
+  height:100%;
+  background-color: black;
+}
+
+.onion-skin{
+  display:none;
+  opacity:.2;
+}
+
+#webcamContainer{
+  width:100%;
+  height:calc(100% - 100px);
+  position:relative;
+}
+
+#videoContainer{
+  margin-top:50px;
+}
+
+#boot-screen-logo{
+  font-family:"futurabold";
+  font-size:100px;
+  margin:0px;
+}
+
+#bootScreen{
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0px;
+  left:0px;
+  background-color:#1c0d1f;
+  z-index:100;
+  text-align:center;  
+}
+
+#bootScreenInstructions p{
+  color:white;
+}
+
+#init{ 
+  display:none
+}
+
+#bootScreenInstructions{
+  margin:0 auto;
+  width:640px;
+  position:relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+
+.bootScreenMantra{
+  font-family: "latomedium";
+}
+
+.myButton {
+  -moz-box-shadow:inset 0px 1px 0px 0px #f29c93;
+  -webkit-box-shadow:inset 0px 1px 0px 0px #f29c93;
+  box-shadow:inset 0px 1px 0px 0px #f29c93;
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #fe1a00), color-stop(1, #ce0100));
+  background:-moz-linear-gradient(top, #fe1a00 5%, #ce0100 100%);
+  background:-webkit-linear-gradient(top, #fe1a00 5%, #ce0100 100%);
+  background:-o-linear-gradient(top, #fe1a00 5%, #ce0100 100%);
+  background:-ms-linear-gradient(top, #fe1a00 5%, #ce0100 100%);
+  background:linear-gradient(to bottom, #fe1a00 5%, #ce0100 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fe1a00', endColorstr='#ce0100',GradientType=0);
+  background-color:#fe1a00;
+  -moz-border-radius:6px;
+  -webkit-border-radius:6px;
+  border-radius:6px;
+  border:1px solid #d83526;
+  display:inline-block;
+  cursor:pointer;
+  color:#ffffff;
+  font-family:"latomedium";
+  font-size:15px;
+  font-weight:bold;
+  padding:6px 24px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #b23e35;
+}
+.myButton:hover {
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ce0100), color-stop(1, #fe1a00));
+  background:-moz-linear-gradient(top, #ce0100 5%, #fe1a00 100%);
+  background:-webkit-linear-gradient(top, #ce0100 5%, #fe1a00 100%);
+  background:-o-linear-gradient(top, #ce0100 5%, #fe1a00 100%);
+  background:-ms-linear-gradient(top, #ce0100 5%, #fe1a00 100%);
+  background:linear-gradient(to bottom, #ce0100 5%, #fe1a00 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ce0100', endColorstr='#fe1a00',GradientType=0);
+  background-color:#ce0100;
+}
+.myButton:active {
+  position:relative;
+  top:1px;
+}
+
+#recordingContainer{
+  padding: 50px 0;
+  position:fixed;
+  display:block;
+  left:0;
+  top:0;
+  height:100vh;
+  width:100%;
+}
+
+#header,#footer{
+  position:absolute;
+  left:0;
+  height:50px;
+  width:100%;
+  background-color:black;
+  color:white;
+  font-family:"latomedium";
+}
+
+#header{
+  top:0px;
+}
+
+#footer{
+  bottom:0px;
+}
+
+body{
+  background-color:white;
+}
+
+#captureContainer{
+  position:absolute;
+  width:100%;
+  text-align:center;
+  bottom: 10px;
+  z-index:10;
+}
+
+#preview{
+  z-index:20;
+}
+
+#webcamCanvas, #previewCanvas{
+  display:none
+}
+
+
+#onion1{z-index:30;}
+#onion2{z-index:31;}
+#onion3{z-index:32;}
+
+.container-content{
+  position: absolute;
+  left:0px;
+  top:0px;
+}
+
+

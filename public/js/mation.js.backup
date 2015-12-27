@@ -1,0 +1,117 @@
+var ENCODE_FRAMERATE = 24;
+var ENCODE_STEPS = 3, currentEncodingStep;
+var videoWidth = 800, videoHeight = 450;
+var dialog, progressbar,previewPlayer, realVideoWidth, realVideoHeight, imagesToEncode;
+var clientId = '809043913106-hda8s2ho0enhcnoeecus3q8gc6fcnf62.apps.googleusercontent.com';
+var apiKey = 'AIzaSyBMhflY8nb0z9SAU1Ff7AkDyVyoDVXEMxA';
+var scopes = 'https://www.googleapis.com/auth/youtube';
+var canvas, video, ctx, refreshInterval, images = [], videoFile,uploadVideo,previewURL, w,h;
+var onionSkin = 0, onionsAvailable = 3;
+var frameTotal = 0, previewFrame, previewInterval, encodedFrameCount, encodeImage;
+
+function refreshOnions(){
+  var onionCount = 1;
+  for (var copyCount=frameTotal-1; copyCount>=Math.max(frameTotal - onionsAvailable, 0); copyCount--){
+    var onionSkin = document.getElementById('onion' + onionCount);
+    onionSkin.innerHTML = "";
+    var img = document.createElement('img');
+    img.src = images[copyCount];
+    onionSkin.appendChild(img);
+    onionCount++;
+  }
+}
+
+function getFrameRate(){
+  return ENCODE_FRAMERATE;
+}
+
+function encodeVideo(){
+
+  imagesToEncode = [];
+  encodedFrameCount = 0;
+
+  var config = new Object();
+  config.target_size = 0;     
+  config.target_PSNR = 0.;    
+  config.method = 4;       
+  config.sns_strength = 50;   
+  config.filter_strength = 20;    
+  config.filter_sharpness = 0;  
+  config.filter_type = 1;     
+  config.partitions = 0;      
+  config.segments = 4;      
+  config.pass = 1;        
+  config.show_compressed = 0;   
+  config.preprocessing = 0;   
+  config.autofilter = 0;      
+  config.extra_info_type = 1;   
+  config.preset = 0         
+  var encoder = new WebPEncoder();
+  encoder.WebPEncodeConfig(config);
+
+  dialog.dialog( "open" );
+
+  encodeImage = new Image();
+  encodeImage.style.display = 'none';
+  encodeImage.onload = function(){
+    ctx.drawImage(encodeImage, 0, 0);
+    var inputData = ctx.getImageData(0,0,canvas.width,canvas.height);
+    var out={output:''}; 
+    var size = encoder.WebPEncodeRGBA(inputData.data, inputData.width, inputData.height, inputData.width * 4, 50, out);     var webpfile = "data:image/webp;base64," + btoa(out.output);
+    imagesToEncode.push(webpfile);
+    if (encodedFrameCount < images.length-1) {
+      progressbar.progressbar( "value", getBasePercentage(1) + Math.floor((encodedFrameCount / images.length)*getStepPercentage()));
+      encodedFrameCount++;
+      encodeImage.src = images[encodedFrameCount];
+    }else{
+      progressbar.progressbar( "value", getBasePercentage(2));
+      videoFile = Whammy.fromImageArray(imagesToEncode, getFrameRate());
+      gapi.client.setApiKey(apiKey);
+      gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+    }
+  }
+
+  encodeImage.src = images[encodedFrameCount];
+
+}
+
+function getStepPercentage(){
+  return Math.floor(100 / ENCODE_STEPS) 
+}
+
+function getBasePercentage(stepNumber){
+  return getStepPercentage() * (stepNumber - 1);
+}
+
+function setOnions(amount){
+  if (amount > 0) refreshOnions();
+  onionSkin = amount;
+  for (var onionCount=1; onionCount<=onionsAvailable; onionCount++){
+    if (onionCount <= amount){
+      document.getElementById('onion' + onionCount).style.display = 'block';
+    }else{
+      document.getElementById('onion' + onionCount).style.display = 'none';
+    }
+  }
+}
+
+function captureFrame(){
+
+      ctx.drawImage(video, (videoWidth - realVideoWidth) / 2, (videoHeight - realVideoHeight) / 2, realVideoWidth, realVideoHeight);
+      var imageData = canvas.toDataURL("image/jpeg");
+      var base64Data = imageData.replace(/^data:image\/(png|jpeg);base64,/, "");
+      
+      images.push(imageData);
+
+      frameTotal++;
+      refreshOnions();
+}
+
+
+function closeDownload() {
+  clearTimeout( progressTimer );
+  dialog.dialog( "close" );
+  progressbar.progressbar( "value", false );
+  progressLabel
+  .text( "Starting download..." );
+}
