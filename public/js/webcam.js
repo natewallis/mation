@@ -85,8 +85,6 @@ var Webcam = {
           }
         };
 
-        console.log(constraints.video.width);
-
         this.mediaDevices.getUserMedia(constraints)
         .then( function(stream) {
           self.params.onSuccess(stream, video);
@@ -100,8 +98,8 @@ var Webcam = {
           "audio": false,
           "video": { 
             mandatory: {
-              minWidth: this.params.width,
-              minHeight: this.params.height
+              minWidth: this.params.desiredWidth,
+              minHeight: this.params.desiredHeight
             }
           }
         }, function(stream){
