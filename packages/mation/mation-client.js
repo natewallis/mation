@@ -88,12 +88,11 @@ Mation.prototype.tryNextLowestResolution = function(){
 }
 
 Mation.prototype.startWebcam = function(desiredWidth, desiredHeight){
-  console.log(desiredWidth, desiredHeight);
-  this.webcamOptions.width = desiredWidth;
-  this.webcamOptions.height = desiredHeight;
+  this.webcamOptions.desiredWidth = desiredWidth;
+  this.webcamOptions.desiredHeight = desiredHeight;
   Webcam.set(this.webcamOptions);
   Webcam.setSWFLocation("fallback/webcam.swf");
-  Webcam.attach('webcamContainer');
+  Webcam.attach('webcam');
 
 };
 
@@ -133,7 +132,7 @@ Mation.prototype.getBasePercentage = function(stepNumber){
 };
 
 Mation.prototype.setOnions = function(amount){
-  if (amount > 0) this.refreshOnions();
+  //if (amount > 0) this.refreshOnions();
   for (var onionCount=1; onionCount<=Mation.NUMBER_OF_ONION_SKINS; onionCount++){
     if (onionCount <= amount){
       document.getElementById('onion' + onionCount).style.display = 'block';
@@ -154,7 +153,7 @@ Mation.prototype.captureFrame = function(){
   }));
   this.frameTotal++;
   this.flagAnimationAsDirty();
-  this.refreshOnions();
+  //this.refreshOnions();
 };
 
 Mation.prototype.handleAuthResult = function(authResult) {

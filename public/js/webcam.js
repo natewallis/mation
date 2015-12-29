@@ -21,8 +21,8 @@ var Webcam = {
 	params: {
 		width: 0,
 		height: 0,
-		dest_width: 0,         // size of captured image
-		dest_height: 0,        // these default to width/height
+		desiredWidth: 0,         // size of captured image
+		desiredHeight: 0,        // these default to width/height
 		image_format: 'jpeg',  // image format (may be jpeg or png)
 		jpeg_quality: 90,      // jpeg image quality from 0 (worst) to 100 (best)
 		force_flash: false,    // force flash mode,
@@ -38,11 +38,11 @@ var Webcam = {
 
 		var self = this;
 		
-		//if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-     // this.mediaDevices = navigator.mediaDevices;
-    //}else if (navigator.getUserMedia || navigator.msGetUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia){
+		if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      this.mediaDevices = navigator.mediaDevices;
+    }else if (navigator.getUserMedia || navigator.msGetUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia){
       this.getUserMedia = navigator.getUserMedia || navigator.msGetUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-   // }
+    }
 
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
     this.userMedia = this.userMedia && (!!this.mediaDevices || !!this.getUserMedia) && !!window.URL;
@@ -77,15 +77,18 @@ var Webcam = {
       var self = this;
       if (this.mediaDevices){
 
-        this.mediaDevices.getUserMedia({
+        var constraints = {
           "audio": false,
           "video": {
-              minWidth: this.params.dest_width,
-              minHeight: this.params.dest_height
+              width: {min:this.params.desiredWidth},
+              height: {min:this.params.desiredHeight}
           }
-        })
+        };
+
+        console.log(constraints.video.width);
+
+        this.mediaDevices.getUserMedia(constraints)
         .then( function(stream) {
-            console.log(self.params);
           self.params.onSuccess(stream, video);
         })
         .catch( function(err) {
@@ -319,15 +322,15 @@ var Webcam = {
     if (this.preview_active) this.unfreeze();
 
     // determine scale factor
-    var scaleX = this.params.width / this.params.dest_width;
-    var scaleY = this.params.height / this.params.dest_height;
+    var scaleX = this.params.width / this.params.desiredWidth;
+    var scaleY = this.params.height / this.params.desiredHeight;
 
     // must unflip container as preview canvas will be pre-flipped
     this.unflip();
 
     // calc final size of image
-    var final_width = params.crop_width || params.dest_width;
-    var final_height = params.crop_height || params.dest_height;
+    var final_width = params.crop_width || params.desiredWidth;
+    var final_height = params.crop_height || params.desiredHeight;
 
     // create canvas for holding preview
     var preview_canvas = document.createElement('canvas');
@@ -453,13 +456,13 @@ var Webcam = {
 
     // create offscreen canvas element to hold pixels
     var canvas = document.createElement('canvas');
-    canvas.width = this.params.dest_width;
-    canvas.height = this.params.dest_height;
+    canvas.width = this.params.desiredWidth;
+    canvas.height = this.params.desiredHeight;
     var context = canvas.getContext('2d');
 
     // flip canvas horizontally if desired
     if (this.params.flip_horiz) {
-      context.translate( params.dest_width, 0 );
+      context.translate( params.desiredWidth, 0 );
       context.scale( -1, 1 );
     }
 
@@ -467,7 +470,7 @@ var Webcam = {
     var func = function() {
       // render image if needed (flash)
       if (this.src && this.width && this.height) {
-        context.drawImage(this, 0, 0, params.dest_width, params.dest_height);
+        context.drawImage(this, 0, 0, params.desiredWidth, params.desiredHeight);
       }
 
       // crop if desired
@@ -478,8 +481,8 @@ var Webcam = {
         var crop_context = crop_canvas.getContext('2d');
 
         crop_context.drawImage( canvas, 
-                               Math.floor( (params.dest_width / 2) - (params.crop_width / 2) ),
-                               Math.floor( (params.dest_height / 2) - (params.crop_height / 2) ),
+                               Math.floor( (params.desiredWidth / 2) - (params.crop_width / 2) ),
+                               Math.floor( (params.desiredHeight / 2) - (params.crop_height / 2) ),
                                params.crop_width,
                                params.crop_height,
                                0,
@@ -510,7 +513,7 @@ var Webcam = {
     // grab image frame from userMedia or flash movie
     if (this.userMedia) {
       // native implementation
-      context.drawImage(this.video, 0, 0, this.params.dest_width, this.params.dest_height);
+      context.drawImage(this.video, 0, 0, this.params.desiredWidth, this.params.desiredHeight);
 
       // fire callback right away
       func();
