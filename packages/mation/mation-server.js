@@ -1,6 +1,6 @@
 Future = Npm.require('fibers/future');
 
-var saveBasePath = '/Users/nathanwallis/Desktop/temp/mation/';
+var saveBasePath = '/var/www/mation.me/media/';
 
 function getMationIdPath(mationId, splitAmount = 6){
   splitAmount = Math.min(mationId.length, splitAmount);
