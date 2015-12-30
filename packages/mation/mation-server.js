@@ -28,7 +28,8 @@ Meteor.methods({
   encodeVideo: function(frameRate, mationID){
     var exec = Npm.require('child_process').exec;
     var fut = new Future();
-    var command = "ffmpeg -r " + frameRate + "  -i " + getMationIdPath(mationID) + "image-%0" + MationFile.NUMBER_OF_ZEROS_FOR_PADDING + "d.jpg -y " + getMationIdPath(mationID) + "video." + MationFile.VIDEO_OUTPUT_EXTENSION;
+    //var command = "ffmpeg -r " + frameRate + "  -i " + getMationIdPath(mationID) + "image-%0" + MationFile.NUMBER_OF_ZEROS_FOR_PADDING + "d.jpg -y " + getMationIdPath(mationID) + "video." + MationFile.VIDEO_OUTPUT_EXTENSION;
+    var command = "mation_publish " + frameRate +" "+ getMationIdPath(mationID) + " " + MationFile.NUMBER_OF_ZEROS_FOR_PADDING + " " + MationFile.VIDEO_OUTPUT_EXTENSION;
     exec (command, function(error, stdout, stderr){
       if (error) {
         fut.throw(error);
