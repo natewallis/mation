@@ -1,5 +1,6 @@
+
 Mation = function (){
-  
+
   this.desiredResolutions = [
     {desiredWidth:1920, desiredHeight:1080},
     {desiredWidth:1280, desiredHeight:720},
@@ -9,10 +10,11 @@ Mation = function (){
   this.frameTotal = 0;
   this.framesSynced = 0;
   this.images = [];
-navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
   document.addEventListener ("keydown", function(event){
     if (event.keyCode == 32) this.captureFrame();
+    if (event.keyCode == 68) this.deleteFrame();
   }.bind(this), false);
 
   document.getElementById('get-started').addEventListener('click', this.getStarted);
@@ -21,20 +23,19 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
     this.encodeVideo();
   }.bind(this));
 
-  $("#captureButton").click(function(e){
-    this.captureFrame();
-  }.bind(this));
-
-  $("#previewButton").click(function(e){
+  /*$("#previewButton").click(function(e){
     this.showPreview();
-  }.bind(this));
+    }.bind(this));
 
-  $("#onionButton1").click(function(e){this.setOnions(1);});
-  $("#onionButton2").click(function(e){this.setOnions(2);});
-  $("#onionButton3").click(function(e){this.setOnions(3);});
-  $("#onionOff").click(function(e){this.setOnions(0);});
+    $("#onionButton1").click(function(e){this.setOnions(1);});
+    $("#onionButton2").click(function(e){this.setOnions(2);});
+    $("#onionButton3").click(function(e){this.setOnions(3);});
+    $("#onionOff").click(function(e){this.setOnions(0);});*/
 
   $("#sync-status").hide();
+  $("#publishContainer").hide();
+
+  this.updateFramesToGo();
 
 };
 
@@ -43,9 +44,11 @@ Mation.API_KEY = 'AIzaSyBMhflY8nb0z9SAU1Ff7AkDyVyoDVXEMxA';
 Mation.CLIENT_ID = '809043913106-hda8s2ho0enhcnoeecus3q8gc6fcnf62.apps.googleusercontent.com';
 Mation.AUTH_SCOPE = 'https://www.googleapis.com/auth/youtube';
 Mation.ENCODE_STEPS = 3;
-Mation.PREVIEW_WIDTH = 500;
-Mation.PREVIEW_HEIGHT = 281;
+Mation.PREVIEW_WIDTH = 200;
+Mation.PUBLISH_REVEAL_TIME = 200;
+Mation.PREVIEW_HEIGHT = 113;
 Mation.NUMBER_OF_ONION_SKINS = 3;
+Mation.FRAMES_REQUIRED_FOR_PUBLISH = 5;
 
 Mation.prototype.getStarted = function(){
   mation.setupCanvasAndWebcam('webcamCanvas', 'webcam');
@@ -66,7 +69,6 @@ Mation.prototype.tryNextLowestResolution = function(){
     onSuccess:function(localMediaStream, videoElement) { 
       this.video = videoElement; 
       this.video.onloadedmetadata = function (e){
-        console.log(this.video.videoWidth);
         this.canvas.width = this.video.videoWidth;
         this.canvas.height = this.video.videoHeight;
         this.previewCanvas.width = Mation.PREVIEW_WIDTH;
@@ -109,18 +111,23 @@ Mation.prototype.refreshOnions = function (){
 };
 
 Mation.prototype.showPreview = function(){
-  if (this.previewInterval) clearInterval(this.previewInterval);
-  this.previewFrame = -1; 
-  this.previewPlayer.style.display = 'block';
-  this.previewInterval = setInterval(function(){
-    this.previewFrame++;
-    if (this.previewFrame == this.images.length) {
-      clearInterval(this.previewInterval);
-      this.previewPlayer.style.display = 'none';
-      return;
-    }
-    this.previewPlayer.src = this.images[this.previewFrame].previewInlineImageData;
-  }.bind(this),1000 / Mation.ENCODE_FRAMERATE);
+  if (this.previewInterval == undefined){ 
+    this.previewFrame = -1; 
+    this.previewInterval = setInterval(function(){
+      this.previewFrame++;
+      if (this.images.length > 0){
+        this.previewPlayer.style.display = 'block';
+        if (this.previewFrame >= this.images.length) {
+          this.previewFrame = 0;
+        }
+        this.previewPlayer.src = this.images[this.previewFrame].previewInlineImageData;
+      }else{
+        clearInterval(this.previewInterval);
+        this.previewInterval = undefined;
+        this.previewPlayer.style.display = 'none';
+      }
+    }.bind(this),1000 / Mation.ENCODE_FRAMERATE);
+  }
 }
 
 Mation.prototype.getStepPercentage = function(){
@@ -142,9 +149,25 @@ Mation.prototype.setOnions = function(amount){
   }
 };
 
+Mation.prototype.deleteFrame = function(e){
+  if (this.images.length > 0){
+    this.frameTotal--;
+    this.framesSynced--;
+    this.updateFramesToGo();
+    if (this.frameTotal < 0) this.frameTotal = 0;
+    if (this.framesSynced < 0) this.framesSynced = 0;
+    var deletedImage = this.images.pop();
+    if (this.framesSynced < Mation.FRAMES_REQUIRED_FOR_PUBLISH) $("#publishContainer").hide(Mation.PUBLISH_REVEAL_TIME);
+  }
+}
+
 Mation.prototype.captureFrame = function(){
+  this.showPreview();
+  var scaleFactor = Mation.PREVIEW_HEIGHT / this.video.videoHeight;
+  var newWidth = this.video.videoWidth * scaleFactor;
+  var newHeight = this.video.videoHeight * scaleFactor;
   this.ctx.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight);
-  this.previewContext.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight, 0,0,Mation.PREVIEW_WIDTH, Mation.PREVIEW_HEIGHT);
+  this.previewContext.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight, (Mation.PREVIEW_WIDTH - newWidth) / 2 ,0,newWidth, newHeight);
   this.images.push(new MationFile({
     inlineImageData:this.canvas.toDataURL("image/jpeg"),
     previewInlineImageData:this.previewCanvas.toDataURL("image/jpeg"),
@@ -162,11 +185,16 @@ Mation.prototype.handleAuthResult = function(authResult) {
 };
 
 Mation.prototype.encodeVideo = function(){
-  Meteor.call ("encodeVideo", 24, function (error, result){
+  dialog.dialog("open");
+  Meteor.call ("encodeVideo", 24, Meteor.connection._lastSessionId,function (error, result){
     if (result){
-      Meteor.call ("publishVideo", function (error, result){
-        console.log(error);
-        console.log(result);
+      Meteor.call ("publishVideo", $("#mationName").val(), $("#mationDescription").val(),Meteor.connection._lastSessionId, function (error, result){
+        if (error){
+          console.log(error);
+        }else if(result){
+          dialog.dialog("close");
+          console.log(result);
+        }
       }.bind(this));
     }
   }.bind(this));
@@ -183,27 +211,36 @@ Mation.prototype.flagAnimationAsDirty = function(){
     if (!this.imageToUpload.serverSynced) break;
   }
 
-  Meteor.call ("uploadFile", this.imageToUpload, function (error, result){
+  Meteor.call ("uploadFile", this.imageToUpload, Meteor.connection._lastSessionId,function (error, result){
     if (error){
       console.log(error);
     }else{
-      console.log(result);
       delete this.images[result].inlineImageData;
       this.images[result].serverSynced = true;
       this.framesSynced++;
-      $("#sync-percentage").html((Math.floor(this.framesSynced / this.frameTotal)) * 100 + "%");
+      this.updateFramesToGo();
       if (this.framesSynced == this.frameTotal) this.flagAnimationAsClean();
+      if (this.framesSynced >= Mation.FRAMES_REQUIRED_FOR_PUBLISH) $("#publishContainer").show(Mation.PUBLISH_REVEAL_TIME);
     }
   }.bind(this));
 
 };
+
+Mation.prototype.updateFramesToGo = function(){
+  var framesToGo = (Mation.FRAMES_REQUIRED_FOR_PUBLISH - this.framesSynced);
+  if (framesToGo < 1){
+    $("#frames-to-go").hide();
+  }else{
+    $("#frames-to-go").show();
+    $("#frames-to-go").text( framesToGo + " frames till you can publish");
+  }
+}
 
 
 Mation.closeDownload = function() {
   clearTimeout( progressTimer );
   dialog.dialog( "close" );
   progressbar.progressbar( "value", false );
-  progressLabel
-  .text( "Starting download..." );
+  progressLabel.text( "Starting download..." );
 };
 

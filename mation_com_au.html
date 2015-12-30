@@ -62,28 +62,51 @@ progressbar.progressbar({
   </div>
 
   <div id="header">
-    <div id="sync-status">
-      <img src="images/loading_spinner.gif" style="width:25px;height25px;"/>
-      <span id="sync-percentage">100%</span>
-    </div>
   </div>
 
   <div id="recordingContainer">
-    <div id="webcamContainer">
+    <div id="centralContainer">
       <!--<div class="container-content onion-skin" id="onion1"></div>
       <div class="container-content onion-skin" id="onion2"></div>
       <div class="container-content onion-skin" id="onion3"></div>-->
       <div id="captureContainer">
-        <input id="captureButton" type="button" value="CAPTURE"/> 
-        <input id="previewButton" type="button" value="PREVIEW"/> 
-        <input id="uploadButton" type="button" value="UPLOAD"/> 
-        <br>
+        <!--<input id="previewButton" type="button" value="PREVIEW"/> -->
         <!--<input id="onionOff" type="button" value="ONION OFF"/> 
         <input id="onionButton1" type="button" value="ONION 1"/> 
         <input id="onionButton2" type="button" value="ONION 2"/> 
         <input id="onionButton3" type="button" value="ONION 3"/> -->
       </div>
-      <div id="webcam"></div>
+      <div id="projectSettings">
+        <p>Project Settings</p>
+        <hr>
+        <p>Controls</p>
+        <span>space bar - capture frame</span>
+        <br>
+        <span>d - delete last frame</span>
+        <hr>
+        <p style="display:inline-block;">Preview</p>
+        <img id="sync-status" src="images/loading_spinner.gif" style="width:25px;height25px;"/>
+        <div style="margin-bottom:10px;" id="previewContainer">
+          <img id="preview"/>
+          <br>
+          <span id="frames-to-go"></span>
+        </div>
+        <hr>
+        <div id="publishContainer">
+          <p>Publish!</p>
+          <span>Click Publish when you are happy with your animation.  After publishing is complete you will receive a link to your animated GIF and Youtube video. You can only publish each project once, so publish wisely!</span>
+          <p>Name</p>
+          <input id="mationName" type="text">
+          <p>Description</p>
+          <textarea id="mationDescription"></textarea>
+          <br>
+          <a style="margin-top:10px;" id="uploadButton" class="myButton">PUBLISH!</a>
+        </div>
+
+      </div>
+      <div id="webcamContainer">
+        <div id="webcam"></div>
+      </div>
     </div>
   </div>
 
@@ -92,23 +115,17 @@ progressbar.progressbar({
   <div id="videoContainer">
     <canvas class="container-content" id="webcamCanvas"></canvas>
     <canvas class="container-content" id="previewCanvas"></canvas>
-    <img class="container-content preview" id="preview"/>
   </div>
 
-  <div id="dialog" title="File Download">
-  <div class="progress-label">Starting download...</div>
-  <div id="progressbar"></div>
+  <div id="dialog" title="Publishing...">
+  <div class="progress-label">Your video is currently being published - please wait</div>
 </div>
 
-<!--  {{#each mations}}
-    {{> mation}}
-    {{/each}}-->
 
 </body>
 
 <template name="mation">
-  <img src="{{thumbnailURL}}"/>
-  <a class="popup-youtube" href="https://www.youtube.com/watch?v={{youtubeid}}">{{name}}</a>
+  <a class="popup-youtube" href="https://www.youtube.com/watch?v={{youtube_id}}">{{name}}</a>
   <script>
     $(function(){
       });

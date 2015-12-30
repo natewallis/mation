@@ -1,10 +1,21 @@
 Future = Npm.require('fibers/future');
 
+var saveBasePath = '/Users/nathanwallis/Desktop/temp/mation/';
+
+function getMationIdPath(mationId, splitAmount = 6){
+  splitAmount = Math.min(mationId.length, splitAmount);
+  return saveBasePath + mationId.split('').slice(0,splitAmount).join('/') + "/" + mationId + "/";
+}
+
+Meteor.startup(function () {
+  // code to run on server at startup
+});
+
 Meteor.methods({
 
-  uploadFile: function (file) {
+  uploadFile: function (file, mationID) {
     var fut = new Future();
-    file.save('/Users/nathanwallis/Desktop/temp/mation', {}, function(err){
+    file.save(getMationIdPath(mationID), {}, function(err){
       if (err){
         fut.throw(err);
       }else{
@@ -14,10 +25,10 @@ Meteor.methods({
     return fut.wait();
   },
 
-  encodeVideo: function(frameRate){
+  encodeVideo: function(frameRate, mationID){
     var exec = Npm.require('child_process').exec;
     var fut = new Future();
-    var command = "ffmpeg -r " + frameRate + "  -i /Users/nathanwallis/Desktop/temp/mation/session/image-%0" + MationFile.NUMBER_OF_ZEROS_FOR_PADDING + "d.jpg -y /Users/nathanwallis/Desktop/temp/mation/video." + MationFile.VIDEO_OUTPUT_EXTENSION;
+    var command = "ffmpeg -r " + frameRate + "  -i " + getMationIdPath(mationID) + "image-%0" + MationFile.NUMBER_OF_ZEROS_FOR_PADDING + "d.jpg -y " + getMationIdPath(mationID) + "video." + MationFile.VIDEO_OUTPUT_EXTENSION;
     exec (command, function(error, stdout, stderr){
       if (error) {
         fut.throw(error);
@@ -29,7 +40,7 @@ Meteor.methods({
     return fut.wait();
   },
 
-  publishVideo: function(){
+  publishVideo: function(name, description, mationID){
     //log job with kue here
     //return to user   
     var fut = new Future();
@@ -42,13 +53,15 @@ Meteor.methods({
     oauth.setCredentials(tokens);
 
     Google.options({auth:oauth});
-    console.log(oauth);
+
+    if (name == '') name = 'mation.me video';
+    if (description == '') description = 'Visit mation.me to create your own video and animated GIF';
 
     Youtube.videos.insert({
       resource: {
         snippet: {
-          title: "Testing YoutTube API NodeJS module"
-      , description: "Test video upload via YouTube API"
+          title:name 
+      , description:description 
         }
       , status: {
     privacyStatus: "private"
@@ -57,15 +70,16 @@ Meteor.methods({
       , part: "snippet,status"
 
       , media: {
-    body: Fs.createReadStream("/Users/nathanwallis/Desktop/temp/mation/video.mp4")
+    body: Fs.createReadStream(getMationIdPath(mationID) + "video.mp4")
       }
-    }, function (err, data) {
+    }, Meteor.bindEnvironment(function (err, data) {
       if(err) {
         fut.throw(err);
       }else{
+        Mations.insert({name:name, description:description, youtube_id:data.id});
         fut.return(data); 
       }
-    });
+    }));
 
     return fut.wait();
   }

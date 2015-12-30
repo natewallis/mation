@@ -14,6 +14,7 @@ Package.onUse(function(api) {
   api.use('ecmascript');
   api.use('underscore');
   api.use('ejson');
+  api.use('mongo', ['client','server']);
   api.export(['MationFile', 'Mation']);
   api.addFiles('mation-file.js');
   api.addFiles('mation-client.js', 'client');

@@ -83,7 +83,6 @@ if (Meteor.isServer) {
 
   _.extend(MationFile.prototype, {
     save: function (dirPath, options, callback) {
-      var dirPath = path.join(dirPath,"session");
       mkdirp(dirPath, function (err) {
         if (err) return cb(err);
         var filepath = path.join(dirPath,this.getFileName());
