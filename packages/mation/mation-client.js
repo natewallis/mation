@@ -194,7 +194,7 @@ Mation.prototype.encodeVideo = function(){
           console.log(error);
         }else if(result){
           $("#publish-spinner").hide();
-          $("#publish-output").html("<p class='bootScreenMantra'>Congratulations - Your video is now public</p><p class='bootScreenMantra'><a target='_blank' href='https://www.youtube.com/watch?v=" + result.id + "'>Watch your Youtube video here</a></p>");
+          $("#publish-output").html("<p class='bootScreenMantra'>Congratulations - Your video is now public</p><img src='http://media.mation.me/?id="+Meteor.connection._lastSessionId+"'><p class='bootScreenMantra'><a target='_blank' href='https://www.youtube.com/watch?v=" + result.id + "'>Watch your Youtube video here</a></p>");
         }
       }.bind(this));
     }
