@@ -34,6 +34,7 @@ Mation = function (){
 
   $("#sync-status").hide();
   $("#publishContainer").hide();
+  $("#publishScreen").hide();
 
   this.updateFramesToGo();
 
@@ -185,15 +186,15 @@ Mation.prototype.handleAuthResult = function(authResult) {
 };
 
 Mation.prototype.encodeVideo = function(){
-  dialog.dialog("open");
+  $("#publishScreen").slideDown();
   Meteor.call ("encodeVideo", 24, Meteor.connection._lastSessionId,function (error, result){
     if (result){
       Meteor.call ("publishVideo", $("#mationName").val(), $("#mationDescription").val(),Meteor.connection._lastSessionId, function (error, result){
         if (error){
           console.log(error);
         }else if(result){
-          dialog.dialog("close");
-          console.log(result);
+          $("#publish-spinner").hide();
+          $("#publish-output").html("<p class='bootScreenMantra'>Congratulations - Your video is now public</p><p class='bootScreenMantra'><a target='_blank' href='https://www.youtube.com/watch?v=" + result.id + "'>Watch your Youtube video here</a></p>");
         }
       }.bind(this));
     }

@@ -98,7 +98,18 @@
   text-align:center;  
 }
 
-#bootScreenInstructions p{
+#publishScreen{
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0p1;
+  left:0px;
+  background-color:#1c0d1f;
+  z-index:101;
+  text-align:center;  
+}
+
+#bootScreenInstructions p, #publishScreen p{
   color:white;
 }
 
@@ -106,7 +117,7 @@
   display:none
 }
 
-#bootScreenInstructions{
+#bootScreenInstructions, #publishScreenInstructions{
   margin:0 auto;
   width:640px;
   position:relative;

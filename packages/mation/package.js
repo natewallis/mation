@@ -19,6 +19,7 @@ Package.onUse(function(api) {
   api.addFiles('mation-file.js');
   api.addFiles('mation-client.js', 'client');
   api.addFiles('mation-server.js', 'server');
+  api.addFiles('mation-tokens.js', 'server');
 });
 
 Package.onTest(function(api) {

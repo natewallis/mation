@@ -41,11 +41,7 @@ Meteor.methods({
   },
 
   publishVideo: function(name, description, mationID){
-    //log job with kue here
-    //return to user   
     var fut = new Future();
-    var key = Npm.require('/Users/nathanwallis/Downloads/client_secret_1015934107435-nqbrhbe5eqlvqtdjqj5l3524r37jbrqk.apps.googleusercontent.com.json');
-    var tokens = Npm.require('/Users/nathanwallis/Desktop/temp/mation/tokens.json');
     var Google = Npm.require('googleapis');
     var Youtube = Google.youtube("v3");
     var Fs = Npm.require('fs');
@@ -64,7 +60,7 @@ Meteor.methods({
       , description:description 
         }
       , status: {
-    privacyStatus: "private"
+    privacyStatus: "public"
       }
       }
       , part: "snippet,status"
