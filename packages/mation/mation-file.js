@@ -84,7 +84,7 @@ if (Meteor.isServer) {
   _.extend(MationFile.prototype, {
     save: function (dirPath, options, callback) {
       mkdirp(dirPath, function (err) {
-        if (err) return cb(err);
+        if (err) return callback(err);
         var filepath = path.join(dirPath,this.getFileName());
         fs.writeFile(filepath, this.convertToBuffer(), function(err){
           callback(err);

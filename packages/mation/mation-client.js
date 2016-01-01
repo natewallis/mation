@@ -49,7 +49,7 @@ Mation.PREVIEW_WIDTH = 200;
 Mation.PUBLISH_REVEAL_TIME = 200;
 Mation.PREVIEW_HEIGHT = 113;
 Mation.NUMBER_OF_ONION_SKINS = 3;
-Mation.FRAMES_REQUIRED_FOR_PUBLISH = 5;
+Mation.FRAMES_REQUIRED_FOR_PUBLISH = 50;
 
 Mation.prototype.getStarted = function(){
   mation.setupCanvasAndWebcam('webcamCanvas', 'webcam');
@@ -194,7 +194,7 @@ Mation.prototype.encodeVideo = function(){
           console.log(error);
         }else if(result){
           $("#publish-spinner").hide();
-          $("#publish-output").html("<p class='bootScreenMantra'>Congratulations - Your video is now public</p><img src='http://media.mation.me/?id="+Meteor.connection._lastSessionId+"'><p class='bootScreenMantra'><a target='_blank' href='https://www.youtube.com/watch?v=" + result.id + "'>Watch your Youtube video here</a></p>");
+          $("#publish-output").html("<p class='bootScreenMantra'>Congratulations - Your video is now public. You have also created your own GIF which you can see below. Animated GIFs are reduced to 10fps to reduce file size</p><img src='http://media.mation.me/?id="+Meteor.connection._lastSessionId+"'><p class='bootScreenMantra'><a target='_blank' href='https://www.youtube.com/watch?v=" + result.id + "'>Watch your Youtube video here</a></p>");
         }
       }.bind(this));
     }
