@@ -2,3 +2,5 @@
 .DS_Store
 *.swo
 *.swn
+mup.json
+settings.json
