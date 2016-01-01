@@ -1,5 +1,4 @@
-
-Mations = new Mongo.Collection("mations");
+Mations = new Meteor.Collection("mations");
 
 if (Meteor.isClient) {
 
