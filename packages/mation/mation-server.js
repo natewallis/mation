@@ -1,10 +1,8 @@
 Future = Npm.require('fibers/future');
 
-var saveBasePath = '/var/www/mation.me/media/';
-
 function getMationIdPath(mationId, splitAmount = 6){
   splitAmount = Math.min(mationId.length, splitAmount);
-  return saveBasePath + mationId.split('').slice(0,splitAmount).join('/') + "/" + mationId + "/";
+  return Meteor.settings.saveBasePath + mationId.split('').slice(0,splitAmount).join('/') + "/" + mationId + "/";
 }
 
 Meteor.startup(function () {
