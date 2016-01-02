@@ -13,8 +13,10 @@ Mation = function (){
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
   document.addEventListener ("keydown", function(event){
-    if (event.keyCode == 32) this.captureFrame();
-    if (event.keyCode == 68) this.deleteFrame();
+    if (event.target.tagName.toLowerCase() !== 'input' && event.target.tagName.toLowerCase() != 'textarea'){
+      if (event.keyCode == 32) this.captureFrame();
+      if (event.keyCode == 68) this.deleteFrame();
+    }
   }.bind(this), false);
 
   document.getElementById('get-started').addEventListener('click', this.getStarted);
@@ -33,7 +35,7 @@ Mation = function (){
     $("#onionOff").click(function(e){this.setOnions(0);});*/
 
   $("#sync-status").hide();
-  $("#publishContainer").hide();
+  //$("#publishContainer").hide();
   $("#publishScreen").hide();
 
   this.updateFramesToGo();
