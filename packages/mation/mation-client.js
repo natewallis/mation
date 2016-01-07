@@ -35,7 +35,7 @@ Mation = function (){
     $("#onionOff").click(function(e){this.setOnions(0);});*/
 
   $("#sync-status").hide();
-  //$("#publishContainer").hide();
+  $("#publishContainer").hide();
   $("#publishScreen").hide();
 
   this.updateFramesToGo();
