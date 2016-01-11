@@ -7,15 +7,16 @@ Mation = function (){
     {desiredWidth:640, desiredHeight:480}
   ];
 
+  this.currentlySyncing = false;
   this.frameTotal = 0;
   this.framesSynced = 0;
   this.images = [];
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
-  document.addEventListener ("keydown", function(event){
+  document.addEventListener ("keypress", function(event){
     if (event.target.tagName.toLowerCase() !== 'input' && event.target.tagName.toLowerCase() != 'textarea'){
       if (event.keyCode == 32) this.captureFrame();
-      if (event.keyCode == 68) this.deleteFrame();
+      if (event.keyCode == 100 || event.keyCode == 68) this.deleteFrame();
     }
   }.bind(this), false);
 
@@ -36,6 +37,7 @@ Mation = function (){
 
   $("#sync-status").hide();
   $("#publishContainer").hide();
+  $("#previewContainer").hide();
   $("#publishScreen").hide();
 
   this.updateFramesToGo();
@@ -119,7 +121,7 @@ Mation.prototype.showPreview = function(){
     this.previewInterval = setInterval(function(){
       this.previewFrame++;
       if (this.images.length > 0){
-        this.previewPlayer.style.display = 'block';
+        $("#previewContainer").show();
         if (this.previewFrame >= this.images.length) {
           this.previewFrame = 0;
         }
@@ -127,7 +129,7 @@ Mation.prototype.showPreview = function(){
       }else{
         clearInterval(this.previewInterval);
         this.previewInterval = undefined;
-        this.previewPlayer.style.display = 'none';
+        $("#previewContainer").hide();
       }
     }.bind(this),1000 / Mation.ENCODE_FRAMERATE);
   }
@@ -208,10 +210,16 @@ Mation.prototype.flagAnimationAsClean = function(){
 }
 
 Mation.prototype.flagAnimationAsDirty = function(){
+
+  if (this.currentlySyncing) return;
+
   $("#sync-status").show();
   for (var imageCount=0; imageCount < this.images.length; imageCount++){
     this.imageToUpload = this.images[imageCount];
-    if (!this.imageToUpload.serverSynced) break;
+    if (!this.imageToUpload.serverSynced) {
+      this.currentlySyncing = true;
+      break;
+    }
   }
 
   Meteor.call ("uploadFile", this.imageToUpload, Meteor.connection._lastSessionId,function (error, result){
@@ -222,7 +230,12 @@ Mation.prototype.flagAnimationAsDirty = function(){
       this.images[result].serverSynced = true;
       this.framesSynced++;
       this.updateFramesToGo();
-      if (this.framesSynced == this.frameTotal) this.flagAnimationAsClean();
+      this.currentlySyncing = false;
+      if (this.framesSynced == this.frameTotal) {
+        this.flagAnimationAsClean();
+      }else{
+        this.flagAnimationAsDirty();
+      }
       if (this.framesSynced >= Mation.FRAMES_REQUIRED_FOR_PUBLISH) $("#publishContainer").show(Mation.PUBLISH_REVEAL_TIME);
     }
   }.bind(this));

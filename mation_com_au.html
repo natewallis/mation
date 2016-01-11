@@ -82,8 +82,7 @@ progressbar.progressbar({
     </div>
   </div>
 
-  <div id="header">
-  </div>
+  <div id="header"><span>MATION</span></div>
 
   <div id="recordingContainer">
     <div id="centralContainer">
@@ -98,21 +97,19 @@ progressbar.progressbar({
         <input id="onionButton3" type="button" value="ONION 3"/> -->
       </div>
       <div id="projectSettings">
-        <p>Project Settings</p>
-        <hr>
         <p>Controls</p>
         <span>space bar - capture frame</span>
         <br>
         <span>d - delete last frame</span>
         <hr>
-        <p style="display:inline-block;">Preview</p>
-        <img id="sync-status" src="images/loading_spinner.gif" style="width:25px;height25px;"/>
         <div style="margin-bottom:10px;" id="previewContainer">
-          <img id="preview"/>
+          <p style="float:left;">Preview</p>
+          <img id="sync-status" src="images/loading_spinner.gif" style="width:25px;float:right;height25px;"/>
+          <img id="preview" style="clear:both;"/>
           <br>
           <span id="frames-to-go"></span>
+          <hr>
         </div>
-        <hr>
         <div id="publishContainer">
           <p>Publish!</p>
           <span>Click Publish when you are happy with your animation.  After publishing is complete you will receive a link to your animated GIF and Youtube video. You can only publish each project once, so publish wisely!</span>
