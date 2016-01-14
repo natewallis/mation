@@ -60,10 +60,8 @@ progressbar.progressbar({
 
   <div id="bootScreen">
     <div id="bootScreenInstructions">
-      <p id="boot-screen-logo">MATION</p>
+      <p id="boot-screen-logo">MATION.ME</p>
       <p class="bootScreenMantra">mation allows you create animations from your web browser using any camera attached to your computer</p>
-      <p class="bootScreenMantra">publish them directly to youtube and share them with your friends</p>
-      <p class="bootScreenMantra">what can you say?</p>
       <a id="get-started" class="myButton">GET STARTED</a>
       <div id="init">
       <p class="bootScreenMantra" style="display:inline-block;">Initialising camera...</p>
@@ -74,7 +72,7 @@ progressbar.progressbar({
 
   <div id="publishScreen">
     <div id="publishScreenInstructions">
-      <p id="boot-screen-logo">MATION</p>
+      <p id="boot-screen-logo">MATION.ME</p>
       <div id="publish-output">
         <p class="bootScreenMantra">Please wait while we publish your project, this can take a minute - please be patient</p>
       </div>
@@ -82,7 +80,7 @@ progressbar.progressbar({
     </div>
   </div>
 
-  <div id="header"><span>MATION</span></div>
+  <div id="header"><span>MATION.ME</span></div>
 
   <div id="recordingContainer">
     <div id="centralContainer">
@@ -112,12 +110,17 @@ progressbar.progressbar({
         </div>
         <div id="publishContainer">
           <p>Publish!</p>
-          <span>Click Publish when you are happy with your animation.</span>
+          <span>Publish to YouTube?</span>
+          <input type="checkbox" id="publishOptionYoutube" checked>
+          <br>
+          <span>Publish animated GIF</span>
+          <input type="checkbox" id="publishOptionGIF" checked>
           <p>Name</p>
           <input id="mationName" type="text">
           <p>Description</p>
           <textarea id="mationDescription"></textarea>
           <br>
+          <span>Click Publish when you are happy with your animation.</span>
           <a style="margin-top:10px;" id="uploadButton" class="myButton">PUBLISH!</a>
         </div>
 
